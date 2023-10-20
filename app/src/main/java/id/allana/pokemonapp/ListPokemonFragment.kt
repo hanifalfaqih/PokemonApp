@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.allana.pokemonapp.adapter.ListPokemonAdapter
 import id.allana.pokemonapp.adapter.LoadingStateAdapter
@@ -102,9 +103,9 @@ class ListPokemonFragment : Fragment() {
          * SEARCH
          */
 
-        viewModel.listSearchPokemon.observe(viewLifecycleOwner) {
-            adapterSearchPokemon.submitList(it.data)
-        }
+//        viewModel.sear.observe(viewLifecycleOwner) {
+//            adapterSearchPokemon.submitData(lifecycle, it)
+//        }
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.pbLoadSearchPokemon.apply {
                 visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -123,9 +124,11 @@ class ListPokemonFragment : Fragment() {
             debounceJob = lifecycleScope.launch {
                 delay(1000L) // Sesuaikan dengan kebutuhan
                 if (query.isNotEmpty()) {
-                    viewModel.searchPokemon(query)
+                    viewModel.searchPokemon(query).observe(viewLifecycleOwner) {
+                        adapterSearchPokemon.submitData(lifecycle, it)
+                    }
                 } else {
-                    adapterSearchPokemon.submitList(emptyList())
+                    adapterSearchPokemon.submitData(PagingData.empty())
                 }
             }
         }

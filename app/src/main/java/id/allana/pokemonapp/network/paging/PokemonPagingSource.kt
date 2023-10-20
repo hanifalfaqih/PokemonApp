@@ -7,7 +7,9 @@ import id.allana.pokemonapp.model.util.Constant.INITIAL_PAGE_INDEX
 import id.allana.pokemonapp.model.util.Constant.PAGE_SIZE
 import id.allana.pokemonapp.network.api.PokemonApiService
 
-class PokemonPagingSource(private val apiService: PokemonApiService): PagingSource<Int, Pokemon>() {
+class PokemonPagingSource(
+    private val query: String,
+    private val apiService: PokemonApiService): PagingSource<Int, Pokemon>() {
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
@@ -18,7 +20,7 @@ class PokemonPagingSource(private val apiService: PokemonApiService): PagingSour
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
         return try {
             val page = params.key ?: INITIAL_PAGE_INDEX
-            val responseData = apiService.getAllPokemon(page, PAGE_SIZE)
+            val responseData = apiService.searchPokemon(query, page, PAGE_SIZE)
 
             LoadResult.Page(
                 data = responseData.data,

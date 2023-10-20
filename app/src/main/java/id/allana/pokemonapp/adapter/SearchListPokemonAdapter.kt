@@ -3,14 +3,15 @@ package id.allana.pokemonapp.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.allana.pokemonapp.ListPokemonFragmentDirections
 import id.allana.pokemonapp.databinding.ItemPokemonLayoutBinding
 import id.allana.pokemonapp.model.response.Pokemon
 
-class SearchListPokemonAdapter: ListAdapter<Pokemon, SearchListPokemonAdapter.ViewHolder>(ListPokemonAdapter.PokemonComparators()) {
+class SearchListPokemonAdapter: PagingDataAdapter<Pokemon, SearchListPokemonAdapter.ViewHolder>(PokemonComparators()) {
 
     inner class ViewHolder(private val binding: ItemPokemonLayoutBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Pokemon) {
@@ -27,8 +28,26 @@ class SearchListPokemonAdapter: ListAdapter<Pokemon, SearchListPokemonAdapter.Vi
         }
     }
 
+    class PokemonComparators: DiffUtil.ItemCallback<Pokemon>() {
+        override fun areItemsTheSame(
+            oldItem: Pokemon,
+            newItem: Pokemon
+        ): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Pokemon,
+            newItem: Pokemon
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+    }
+
     override fun onBindViewHolder(holder: SearchListPokemonAdapter.ViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let {
+            holder.bind(it)
+        }
     }
 
     override fun onCreateViewHolder(

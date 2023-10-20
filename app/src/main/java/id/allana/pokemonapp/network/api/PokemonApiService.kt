@@ -21,7 +21,7 @@ interface PokemonApiService {
     @GET("cards?")
     suspend fun searchPokemon(
         @Query("q") query: String,
-//        @Query("page") page: Int,
-//        @Query("pageSize") pageSize: Int
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
     ): ResponseAllPokemon
 }

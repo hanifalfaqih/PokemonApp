@@ -9,17 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.allana.pokemonapp.ListPokemonFragmentDirections
 import id.allana.pokemonapp.R
+import id.allana.pokemonapp.cache.PokemonEntity
 import id.allana.pokemonapp.databinding.ItemPokemonLayoutBinding
-import id.allana.pokemonapp.model.response.Pokemon
 
-class ListPokemonAdapter: PagingDataAdapter<Pokemon, ListPokemonAdapter.ViewHolder>(PokemonComparators()) {
+class ListPokemonAdapter: PagingDataAdapter<PokemonEntity, ListPokemonAdapter.ViewHolder>(PokemonComparators()) {
 
     inner class ViewHolder(private val binding: ItemPokemonLayoutBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Pokemon) {
+        fun bind(data: PokemonEntity) {
             binding.apply {
                 tvPokemonName.text = data.name
                 Glide.with(itemView.context)
-                    .load(data.images.small)
+                    .load(data.imagesUrl)
+                    .placeholder(R.drawable.ic_placeholder_image)
                     .into(sivPokemonPoster)
             }
             itemView.setOnClickListener {
@@ -29,25 +30,26 @@ class ListPokemonAdapter: PagingDataAdapter<Pokemon, ListPokemonAdapter.ViewHold
         }
     }
 
-    class PokemonComparators: DiffUtil.ItemCallback<Pokemon>() {
+    class PokemonComparators: DiffUtil.ItemCallback<PokemonEntity>() {
         override fun areItemsTheSame(
-            oldItem: Pokemon,
-            newItem: Pokemon
+            oldItem: PokemonEntity,
+            newItem: PokemonEntity
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: Pokemon,
-            newItem: Pokemon
+            oldItem: PokemonEntity,
+            newItem: PokemonEntity
         ): Boolean {
             return oldItem.id == newItem.id
         }
-
     }
 
     override fun onBindViewHolder(holder: ListPokemonAdapter.ViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let {
+            holder.bind(it)
+        }
     }
 
     override fun onCreateViewHolder(
